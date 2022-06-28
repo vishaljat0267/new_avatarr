@@ -144,7 +144,7 @@ app.patch('/updatequantity/:id', async(req,res)=>{
     var id = req.params.id;
     console.log(req.params);
     if(req.body.update === 'inc'){
-        Usermodel.user4.findOneAndUpdate({"_id":id},{ $inc :{quantity:+1}},{new : true},function(err,data){
+        Usermodel.user4.findOneAndUpdate({"_id":id},{ $inc :{quantity:+1 || quantity>=0}},{new : true},function(err,data){
             console.log(data);
             if(err) return new Error("no items")
             res.status(201).send({msg:"data successfully", data:data})
