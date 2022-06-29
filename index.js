@@ -75,7 +75,7 @@ app.post("/login", async (req, res) => {
         const useremail = await Usermodel.Usercollec.findOne({ $and: [{ $or: [{ email: emailphone }, { phone: emailphone }] }, { password }] });
         console.log(useremail);
         if (useremail) {
-            console.log('kkkk');
+            // console.log('kkkk');
             const token = jwt.sign({ useremail }, 'email')
             res.status(200).send({ msg: "Login Successful", token ,data:useremail});
 
@@ -120,21 +120,43 @@ app.get('/mobileproducts', async(req, res) => {
    res.send({"data":data})
 })
 
+// exports.addtoCart = async (req, res) => {
+//     try {
+//         const { id, email } = req.body;
+//         console.log(req.body);
+//         const result = await UserCollection.updateOne({ email }, { $push: { cartIems: { id } } })
+//         res.status(200).send({ msg: "item added succesfully" })
+//     }
+//     catch (err) {
+//         res.status(500).send(err)
+//     }
+// }
+
 
 app.post('/addtocart',async(req, res) => {
-    console.log(req.body);
-    req.body.quantity=1
-    const userDetail = Usermodel.user4(req.body)
-    //  userDetail.cartItems.push(_id)
-    userDetail.save((err,userDetail)=>{  
-    console.log(userDetail);
-   if (err) {
-        res.status(500).send({ err })
-    }
-    else {
-        res.status(200).send({msg:"item added succesfully",data:req.body })
-    }
-})
+    try {
+                const { id , email } = req.body;
+                console.log(req.body);
+                const result = await Usermodel.updateOne({ email }, { $push: { cartItems: { id } } })
+                res.status(200).send({ msg: "item added succesfully" })
+            }
+            catch (err) {
+                res.status(500).send(err)
+            }
+        
+//     console.log(req.body);
+//     // req.body.quantity=1
+//     const userDetail = await Usermodel.user4(req.body)
+//     //  userDetail.cartItems.push(_id)
+//     userDetail.save((err,userDetail)=>{  
+//     console.log(userDetail);
+//    if (err) {
+//         res.status(500).send({ err })
+//     }
+//     else {
+//         res.status(200).send({msg:"item added succesfully",data:req.body })
+//     }
+// })
 })
 
 app.delete('/deleteitem/:id',(req,res)=> {

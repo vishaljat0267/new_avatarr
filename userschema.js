@@ -8,10 +8,10 @@ const UserSchema = new Schema({
     confirm_password: String,
     verificationCode:String,
     status:String,
-    // cartItems: {
-    //     type:[],
-    //     default:[]
-    // }
+    cartItems: {
+        type:Array,
+        default:[]
+    }
 })
 
 module.exports.Usercollec = new model("UserSchema", UserSchema)
