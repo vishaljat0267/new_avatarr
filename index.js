@@ -89,6 +89,14 @@ app.post("/login", async (req, res) => {
     }
 })
 
+app.get('/getUsers', async (req, res) => {
+    try {  
+         const data=await Usermodel.Usercollec.find({})
+        res.status(200).send({data})
+    } catch (error) {
+        res.status(500).send({msg:"unable to fetch"})
+    }
+})
 
 app.get('/card', async(req, res) => {
     const data=await Usermodel.user.find({})
@@ -135,10 +143,11 @@ app.get('/mobileproducts', async(req, res) => {
 
 app.post('/addtocart',async(req, res) => {
     try {
-                const { id , email } = req.body;
+                const {title,description,image,email,category } = req.body;
                 console.log(req.body);
-                const result = await Usermodel.user4.updateOne({ email }, { $push: { cartItems: { id } } })
-                res.status(200).send({ msg: "item added succesfully" })
+                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category } } })
+                console.log("===============>",result);
+                result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({msg:"email not found"})
             }
             catch (err) {
                 res.status(500).send(err)
@@ -174,10 +183,10 @@ app.delete('/deleteitem/:id',(req,res)=> {
 
 
 app.get('/cardShow', async(req, res) => {
-    const data=await Usermodel.user4.find({})
-   
-    console.log("hihihihii",data.length);
-   res.send({"data":data})
+    const {email} = req.body
+    const data = await Usermodel.Usercollec.findOne({email});
+    data  ? res.status(200).send({data:data.cartItems}) :  res.status(404).send({msg:"email not found"})
+        
 })
 
 
