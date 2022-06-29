@@ -7,11 +7,11 @@ const UserSchema = new Schema({
     password: String,
     confirm_password: String,
     verificationCode:String,
-    status: String,
-    cartItems:[
-
-    ]
-
+    status:String,
+    // cartItems: {
+    //     type:[],
+    //     default:[]
+    // }
 })
 
 module.exports.Usercollec = new model("UserSchema", UserSchema)
