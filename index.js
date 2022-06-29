@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose= require('mongoose');
+const {sendMobileSMS} = require('./TwilioSms')
+const sendMail = require('./NodemailerEmail')
 // const {Schema,model} = mongoose
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
@@ -8,8 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const {sendMobileSMS} = require('./TwilioSms')
-const sendMail = require('./NodemailerEmail')
 
 const port =process.env.PORT || 8080;
 
@@ -26,7 +26,8 @@ mongoose.connect(DB,{
 }).catch((err) => console.log('no connections'));
 
 };
-
+// app.use(cors());
+// app.use(express.json());
 
 
 app.post('/signup', (req, res) => { // new Entry                                                     
@@ -36,7 +37,7 @@ app.post('/signup', (req, res) => { // new Entry
     req.body.verificationCode = val
     req.body.status="not verified"
     const msg=`hi this verification code ${val}`
-    const userDetail = Usermodel.UserCollec(req.body)
+    const userDetail = Usermodel.Usercollec(req.body)
     userDetail.save((err, userDetail) => {
         const smsresult= sendMobileSMS(msg,phone)
         const sendmail=sendMail(email,msg)
@@ -50,7 +51,7 @@ app.post('/signup', (req, res) => { // new Entry
 })
 
 app.patch('/verification', async(req,res,next)=>{ 
-     Usermodel.UserCollec.findOneAndUpdate({email: req.body.email,verificationCode:req.body.verificationCode},{status:"verified"},{new:true})
+     Usermodel.Usercollec.findOneAndUpdate({email: req.body.email,verificationCode:req.body.verificationCode},{status:"verified"},{new:true})
     .then(user=>{
         console.log(user);
         if(user){
@@ -71,7 +72,7 @@ app.post("/login", async (req, res) => {
         const password = req.body.password
         console.log(req.body.emailphone);
 
-        const useremail = await Usermodel.UserCollec.findOne({ $and: [{ $or: [{ email: emailphone }, { phone: emailphone }] }, { password }] });
+        const useremail = await Usermodel.Usercollec.findOne({ $and: [{ $or: [{ email: emailphone }, { phone: emailphone }] }, { password }] });
         console.log(useremail);
         if (useremail) {
             console.log('kkkk');
