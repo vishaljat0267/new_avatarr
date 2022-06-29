@@ -35,6 +35,10 @@ module.exports.user2 = new model("womanproducts", womanproducts)
 const products = new Schema({
 })
 module.exports.user3 = new model("products", products)
+const Mobileproducts= new Schema({
+})
+
+module.exports.user5 = new model("Mobileproducts", Mobileproducts)
 
 
 const addcards = new Schema({
