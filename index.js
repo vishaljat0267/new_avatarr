@@ -137,7 +137,7 @@ app.post('/addtocart',async(req, res) => {
     try {
                 const { id , email } = req.body;
                 console.log(req.body);
-                const result = await Usermodel.Usercollec.updateOne({ email }, { $push: { cartItems: { id } } })
+                const result = await Usermodel.user4.updateOne({ email }, { $push: { cartItems: { id } } })
                 res.status(200).send({ msg: "item added succesfully" })
             }
             catch (err) {
