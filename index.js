@@ -185,7 +185,7 @@ app.delete('/deleteitem/:id',(req,res)=> {
 app.get('/cardShow', async(req, res) => {
     const {email} = req.body
     const data = await Usermodel.Usercollec.findOne({email});
-    data  ? res.status(200).send({data:data.cartItems}) :  res.status(404).send({msg:"email not found"})
+    data  ? res.status(200).send({data:data.cartItems}) :  res.status(404).send({msg:"email not found"});
         
 })
 
