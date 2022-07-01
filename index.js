@@ -143,9 +143,9 @@ app.get('/mobileproducts', async(req, res) => {
 
 app.post('/addtocart',async(req, res) => {
     try {
-                const {title,description,image,email,category,id } = req.body;
+                const {title,description,image,email,category,product_id } = req.body;
                 console.log(req.body);
-                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category,id } } })
+                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category,product_id } } })
                 console.log("===============>",result);
                 result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({msg:"email not found"})
             }
@@ -170,7 +170,7 @@ app.post('/addtocart',async(req, res) => {
 
 app.delete('/deleteitem/:id',(req,res)=> {
     // const userDetail = Usermodel.user4.find(req.body)
-     Usermodel.Usercollec.findOneAndDelete({id: req.params.id}, function(err,data){
+     Usermodel.Usercollec.cartItems.findOneAndDelete({id: req.params.id}, function(err,data){
         if(err) return res.send(err);
         res.send("Successfully deleted Items")
     })
