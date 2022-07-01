@@ -143,9 +143,9 @@ app.get('/mobileproducts', async(req, res) => {
 
 app.post('/addtocart',async(req, res) => {
     try {
-                const {title,description,image,email,category,_id } = req.body;
+                const {title,description,image,email,category,id } = req.body;
                 console.log(req.body);
-                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category,_id } } })
+                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category,id } } })
                 console.log("===============>",result);
                 result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({msg:"email not found"})
             }
