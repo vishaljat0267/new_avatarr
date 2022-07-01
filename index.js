@@ -170,7 +170,7 @@ app.post('/addtocart',async(req, res) => {
 
 app.delete('/deleteitem/:id',(req,res)=> {
     // const userDetail = Usermodel.user4.find(req.body)
-     Usermodel.Usercollec.findOneAndDelete({_id: req.params.id}, function(err,data){
+     Usermodel.Usercollec.findOneAndDelete({id: req.params.id}, function(err,data){
         if(err) return res.send(err);
         res.send("Successfully deleted Items")
     })
