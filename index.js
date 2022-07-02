@@ -1,29 +1,29 @@
 const express = require('express');
-const mongoose= require('mongoose');
-const {sendMobileSMS} = require('./TwilioSms')
+const mongoose = require('mongoose');
+const { sendMobileSMS } = require('./TwilioSms')
 const sendMail = require('./NodemailerEmail')
 // const {Schema,model} = mongoose
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
-const  Usermodel=require ("./userschema")
+const Usermodel = require("./userschema")
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 
-const port =process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 
 const DB = 'mongodb+srv://vish:1234@cluster0.c9vwu.mongodb.net/mernstack'
 
 {
-mongoose.connect(DB,{
-    // useNewUrlParser: true,
-  
-    // useUnfiedTopology: true,
-    // useFindAndModify: false
-}).then(()=>{
-    console.log('connections successful');
-}).catch((err) => console.log('no connections'));
+    mongoose.connect(DB, {
+        // useNewUrlParser: true,
+
+        // useUnfiedTopology: true,
+        // useFindAndModify: false
+    }).then(() => {
+        console.log('connections successful');
+    }).catch((err) => console.log('no connections'));
 
 };
 // app.use(cors());
@@ -31,16 +31,16 @@ mongoose.connect(DB,{
 
 
 app.post('/signup', (req, res) => { // new Entry                                                     
-    req.body.phone='+91'+req.body.phone
-    const {phone,email}=req.body
+    req.body.phone = '+91' + req.body.phone
+    const { phone, email } = req.body
     var val = Math.floor(1000 + Math.random() * 9000);
     req.body.verificationCode = val
-    req.body.status="not verified"
-    const msg=`hi this verification code ${val}`
+    req.body.status = "not verified"
+    const msg = `hi this verification code ${val}`
     const userDetail = Usermodel.Usercollec(req.body)
     userDetail.save((err, userDetail) => {
-        const smsresult= sendMobileSMS(msg,phone)
-        const sendmail=sendMail(email,msg)
+        const smsresult = sendMobileSMS(msg, phone)
+        const sendmail = sendMail(email, msg)
         if (err) {
             res.status(500).send({ err })
         }
@@ -50,17 +50,17 @@ app.post('/signup', (req, res) => { // new Entry
     })
 })
 
-app.patch('/verification', async(req,res,next)=>{ 
-     Usermodel.Usercollec.findOneAndUpdate({email: req.body.email,verificationCode:req.body.verificationCode},{status:"verified"},{new:true})
-    .then(user=>{
-        console.log(user);
-        if(user){
-            res.status(200).send({msg:'verified succesfully',data:user})
-        }
-        else{
-            console.log('user Does Not Exits');
-        }
-    })
+app.patch('/verification', async (req, res, next) => {
+    Usermodel.Usercollec.findOneAndUpdate({ email: req.body.email, verificationCode: req.body.verificationCode }, { status: "verified" }, { new: true })
+        .then(user => {
+            console.log(user);
+            if (user) {
+                res.status(200).send({ msg: 'verified succesfully', data: user })
+            }
+            else {
+                console.log('user Does Not Exits');
+            }
+        })
 })
 
 
@@ -77,7 +77,7 @@ app.post("/login", async (req, res) => {
         if (useremail) {
             // console.log('kkkk');
             const token = jwt.sign({ useremail }, 'email')
-            res.status(200).send({ msg: "Login Successful", token ,data:useremail});
+            res.status(200).send({ msg: "Login Successful", token, data: useremail });
 
         }
         else {
@@ -90,42 +90,42 @@ app.post("/login", async (req, res) => {
 })
 
 app.get('/getUsers', async (req, res) => {
-    try {  
-         const data=await Usermodel.Usercollec.find({})
-        res.status(200).send({data})
+    try {
+        const data = await Usermodel.Usercollec.find({})
+        res.status(200).send({ data })
     } catch (error) {
-        res.status(500).send({msg:"unable to fetch"})
+        res.status(500).send({ msg: "unable to fetch" })
     }
 })
 
-app.get('/card', async(req, res) => {
-    const data=await Usermodel.user.find({})
-    console.log("hihihihii",data);
-   res.send({"data":data})
+app.get('/card', async (req, res) => {
+    const data = await Usermodel.user.find({})
+    console.log("hihihihii", data);
+    res.send({ "data": data })
 })
 
-app.get('/card2', async(req, res) => {
-    const data=await Usermodel.user1.find({})
-    console.log("hihihihii",data);
-   res.send({"data":data})
+app.get('/card2', async (req, res) => {
+    const data = await Usermodel.user1.find({})
+    console.log("hihihihii", data);
+    res.send({ "data": data })
 })
 
-app.get('/card3', async(req, res) => {
-    const data=await Usermodel.user2.find({})
-    console.log("hihihihii",data);
-   res.send({"data":data})
+app.get('/card3', async (req, res) => {
+    const data = await Usermodel.user2.find({})
+    console.log("hihihihii", data);
+    res.send({ "data": data })
 })
 
-app.get('/card4', async(req, res) => {
-    const data=await Usermodel.user3.find({})
-    console.log("hihihihii",data);
-   res.send({"data":data})
+app.get('/card4', async (req, res) => {
+    const data = await Usermodel.user3.find({})
+    console.log("hihihihii", data);
+    res.send({ "data": data })
 })
 
-app.get('/mobileproducts', async(req, res) => {
-    const data=await Usermodel.user5.find({})
-    console.log("hihihihii",data);
-   res.send({"data":data})
+app.get('/mobileproducts', async (req, res) => {
+    const data = await Usermodel.user5.find({})
+    console.log("hihihihii", data);
+    res.send({ "data": data })
 })
 
 // exports.addtoCart = async (req, res) => {
@@ -141,78 +141,95 @@ app.get('/mobileproducts', async(req, res) => {
 // }
 
 
-app.post('/addtocart',async(req, res) => {
+app.post('/addtocart', async (req, res) => {
     try {
-                const {title,description,image,email,category,product_id } = req.body;
-                console.log(req.body);
-                const result = await Usermodel.Usercollec.findOneAndUpdate({email}, { $push: { cartItems: {title,description,image,category,product_id } } })
-                console.log("===============>",result);
-                result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({msg:"email not found"})
-            }
-            catch (err) {
-                res.status(500).send(err)
-            }
-        
-//     console.log(req.body);
-//     // req.body.quantity=1
-//     const userDetail = await Usermodel.user4(req.body)
-//     //  userDetail.cartItems.push(_id)
-//     userDetail.save((err,userDetail)=>{  
-//     console.log(userDetail);
-//    if (err) {
-//         res.status(500).send({ err })
-//     }
-//     else {
-//         res.status(200).send({msg:"item added succesfully",data:req.body })
-//     }
-// })
-})
-
-app.delete('/deleteitem/:id',(req,res)=> {
-    // const userDetail = Usermodel.user4.find(req.body)
-     Usermodel.Usercollec.cartItems.findOneAndDelete({id: req.params.id}, function(err,data){
-        if(err) return res.send(err);
-        res.send("Successfully deleted Items")
-    })
-
-})
-
-
-
-
-
-
-app.post('/cardShow', async(req, res) => {
-    try {
-        const {email} = req.body
-        const data = await Usermodel.Usercollec.findOne({email});
-        console.log(">>>>>>>>>>>",data);
-        data  ? res.status(200).send({data:data.cartItems}) :  res.status(404).send({msg:"email not found"});
-    } catch (error) {
-        res.status(500).send({error})
+        const { title, description, image, email, category, product_id } = req.body;
+        console.log(req.body);
+        const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id } } })
+        console.log("===============>", result);
+        result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({ msg: "email not found" })
     }
-   
-        
+    catch (err) {
+        res.status(500).send(err)
+    }
+
+    //     console.log(req.body);
+    //     // req.body.quantity=1
+    //     const userDetail = await Usermodel.user4(req.body)
+    //     //  userDetail.cartItems.push(_id)
+    //     userDetail.save((err,userDetail)=>{  
+    //     console.log(userDetail);
+    //    if (err) { 
+    //         res.status(500).send({ err })
+    //     }
+    //     else {
+    //         res.status(200).send({msg:"item added succesfully",data:req.body })
+    //     }
+    // })
+})
+
+app.delete('/deleteitem/:product_id/:email', async(req, res) => {
+    // const userDetail = Usermodel.user4.find(req.body)
+    const { product_id, email } = req.params
+    const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, {
+        $pullAll: {
+            cartItems: [{
+                product_id: product_id,
+            }],
+        }
+    })
+    console.log("===============>", result);
+        result ? res.status(200).send({ msg: "item delete succesfully" ,data:result}) : res.status(404).send({ msg: "email not found" })
+
+    // Usermodel.Usercollec.findOne({ email: email }, function (err, data) {
+    //     if (err) return res.send(err);
+    //     const indexOfObject = data.cartItems.findIndex(object => {
+    //         return object.product_id === product_id;
+    //     });
+    //     data.cartItems.splice(indexOfObject, 1)
+    //     Usermodel.Usercollec.updateOne({})
+    //     console.log("data", data)
+    //     res.send({ msg: "Successfully deleted Items", data: data })
+    // })
+
+})
+
+
+
+
+
+
+app.post('/cardShow', async (req, res) => {
+    try {
+        const { email } = req.body
+        const data = await Usermodel.Usercollec.findOne({ email });
+        console.log(">>>>>>>>>>>", data);
+        data ? res.status(200).send({ data: data.cartItems }) : res.status(404).send({ msg: "email not found" });
+    } catch (error) {
+        res.status(500).send({ error })
+    }
+
+
 })
 
 
 // BlogPost.update({_id: blogPostId, 'comments._id': commentId}, {$inc:{'comments.$.rating':1}})
 
 
-app.patch('/updatequantity/:id',async(req,res)=>{
-   var id =req.params.id;
-   console.log(req.params);
-   if (req.body.update==="inc") {
-    Usermodel.user4.findOneAndUpdate({"_id":id},{ $inc :{quantity:1,}},{new : true},function(err,data){
-        console.log(data);
-        if(err) return new Error("no products")
-        res.status(201).send({msg:"data successfully",data:data})
-    })
+app.patch('/updatequantity/:id', async (req, res) => {
+    var id = req.params.id;
+    console.log(req.params);
+    if (req.body.update === "inc") {
+        Usermodel.user4.findOneAndUpdate({ "_id": id }, { $inc: { quantity: 1, } }, { new: true }, function (err, data) {
+            console.log(data);
+            if (err) return new Error("no products")
+            res.status(201).send({ msg: "data successfully", data: data })
+        })
     }
-    else{
-        Usermodel.user4.findOneAndUpdate({"_id":id},{ $inc :{quantity:-1 || quantity>=0}},{new : true},function(err,data){
-            if(err) return new Error("no products")
-            res.status(201).send({msg:"data successfully",data:data})
+    else {
+        Usermodel.user4.findOneAndUpdate({ "_id": id }, { $inc: { quantity: -1 || quantity >= 0 } }, { new: true }, function (err, data) {
+            if (err) return new Error("no products")
+            res.status(201).send({ msg: "data successfully", data: data })
         })
 
     }
