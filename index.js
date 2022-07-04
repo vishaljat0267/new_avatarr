@@ -201,7 +201,7 @@ app.patch('/updatequantity/:product_id/:email', async (req, res) => {
     console.log(req.params)
     const {product_id,email} = req.params
     const {update,quantity} = req.body
-     i= parseInt(quantity)
+    let  i= parseInt(quantity)
     console.log("=====================>",i);
     if (update === "inc") {
 
