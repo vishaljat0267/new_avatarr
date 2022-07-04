@@ -202,7 +202,7 @@ app.patch('/updatequantity/:product_id/:email', async (req, res) => {
     const {product_id,email} = req.params
     const {update,quantity} = req.body
      i= parseInt(quantity)
-    console.log(req.body);
+    console.log("=====================>",i);
     if (update === "inc") {
 
         Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":++i }},{new: true}, function (err, data) {
