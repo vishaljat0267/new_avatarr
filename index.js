@@ -144,7 +144,7 @@ app.get('/mobileproducts', async (req, res) => {
 app.post('/addtocart', async (req, res) => {
     try {
         const { title, description, image, email, category, product_id,quantity } = req.body;
-        // req.body.quantity=[]
+        req.body.quantity=1
         console.log(req.body);
         const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id,quantity } } })
         console.log("===============>", result);
