@@ -216,17 +216,17 @@ app.patch('/updatequantity/:product_id/:email', async (req, res) => {
         //     res.status(201).send({ msg: "data successfully", data: data })
         // })
     }
-    // else {
-    //     if(i > 0)
-    //    {
-    //      Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":--i }}, { new: true }, function (err, data) {
-    //         if (err) return new Error("no products")
-    //         res.status(201).send({ msg: "data successfully", data: data })
-    //     })
-    // }
+    else {
+        if(i > 0)
+       {
+         Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":--i }}, { new: true }, function (err, data) {
+            if (err) return new Error("no products")
+            res.status(201).send({ msg: "data successfully", data: data })
+        })
+    }
     
 
-    // }
+    }
 })
 
 
