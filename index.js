@@ -136,7 +136,7 @@ app.get('/mobileproducts', async (req, res) => {
 //         res.status(200).send({ msg: "item added succesfully" })
 //     }
 //     catch (err) {
-//         res.status(500).send(err)
+//         res.status(500).send(err) 
 //     }
 // }
 
@@ -171,11 +171,13 @@ app.post('/addtocart', async (req, res) => {
 app.delete('/deleteitem/:product_id/:email', async(req, res) => {
     // const userDetail = Usermodel.user4.find(req.body)
     const { product_id, email } = req.params
+    console.log(">>>>>>",req.body);
+    console.log(";;;;;;",req.params);
     const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, {
-        $pullAll: {
-            cartItems: [{
+        $pull:{
+            cartItems: {
                 product_id: product_id,
-            }],
+            },
         }
     })
     console.log("===============>", result);
