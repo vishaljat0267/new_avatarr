@@ -143,9 +143,10 @@ app.get('/mobileproducts', async (req, res) => {
 
 app.post('/addtocart', async (req, res) => {
     try {
-        const { title, description, image, email, category, product_id } = req.body;
+        const { title, description, image, email, category, product_id,quantity } = req.body;
+        req.body.quantity=1
         console.log(req.body);
-        const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id } } })
+        const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id,quantity } } })
         console.log("===============>", result);
         result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({ msg: "email not found" })
     }
@@ -182,25 +183,7 @@ app.delete('/deleteitem/:product_id/:email', async(req, res) => {
     })
     console.log("===============>", result);
         result ? res.status(200).send({ msg: "item delete succesfully" ,data:result}) : res.status(404).send({ msg: "email not found" })
-
-    // Usermodel.Usercollec.findOne({ email: email }, function (err, data) {
-    //     if (err) return res.send(err);
-    //     const indexOfObject = data.cartItems.findIndex(object => {
-    //         return object.product_id === product_id;
-    //     });
-    //     data.cartItems.splice(indexOfObject, 1)
-    //     Usermodel.Usercollec.updateOne({})
-    //     console.log("data", data)
-    //     res.send({ msg: "Successfully deleted Items", data: data })
-    // })
-
 })
-
-
-
-
-
-
 app.post('/cardShow', async (req, res) => {
     try {
         const { email } = req.body
@@ -210,26 +193,23 @@ app.post('/cardShow', async (req, res) => {
     } catch (error) {
         res.status(500).send({ error })
     }
-
-
 })
-
-
 // BlogPost.update({_id: blogPostId, 'comments._id': commentId}, {$inc:{'comments.$.rating':1}})
 
 
-app.patch('/updatequantity/:id', async (req, res) => {
-    var id = req.params.id;
+app.patch('/updatequantity/:product_id/:email', async (req, res) => {
+    // var id = req.params.id;
+    const {product_id, email} = req.params
     console.log(req.params);
     if (req.body.update === "inc") {
-        Usermodel.user4.findOneAndUpdate({ "_id": id }, { $inc: { quantity: 1, } }, { new: true }, function (err, data) {
+        Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email }, { $inc: { quantity: 1, } }, { new: true }, function (err, data) {
             console.log(data);
             if (err) return new Error("no products")
             res.status(201).send({ msg: "data successfully", data: data })
         })
     }
     else {
-        Usermodel.user4.findOneAndUpdate({ "_id": id }, { $inc: { quantity: -1 || quantity >= 0 } }, { new: true }, function (err, data) {
+        Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email}, { $inc: { quantity: -1} }, { new: true }, function (err, data) {
             if (err) return new Error("no products")
             res.status(201).send({ msg: "data successfully", data: data })
         })
