@@ -144,7 +144,6 @@ app.get('/mobileproducts', async (req, res) => {
 app.post('/addtocart', async (req, res) => {
     try {
         const { title, description, image, email, category, product_id,quantity } = req.body;
-        req.body.quantity=1
         console.log(req.body);
         const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id,quantity } } })
         console.log("===============>", result);
@@ -198,21 +197,34 @@ app.post('/cardShow', async (req, res) => {
 
 
 app.patch('/updatequantity/:product_id/:email', async (req, res) => {
-    // var id = req.params.id;
-    const {product_id, email} = req.body
-    console.log("nnn",req.body);
-    if (req.body.update === "inc") {
-        Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email }, { $inc: { "cartItems.$.quantity": 1 } }, { new: true }, function (err, data) {
-            console.log(data);
+   
+    console.log(req.params)
+    const {product_id,email} = req.params
+    const {update,quantity} = req.body
+     i= parseInt(quantity)
+    console.log(req.body);
+    if (update === "inc") {
+
+        Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":++i }},{new: true}, function (err, data) {
+            console.log("===>",data);
+            if (err) return new Error("no products")
+            res.status(200).send({ data: data})
+        })
+        // Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email}, { $inc: {quantity: 1 } }, { new: true }, function (err, data) {
+        //     console.log(data);
+        //     if (err) return new Error("no products")
+        //     res.status(201).send({ msg: "data successfully", data: data })
+        // })
+    }
+    else {
+        if(i > 0)
+       {
+         Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":--i }}, { new: true }, function (err, data) {
             if (err) return new Error("no products")
             res.status(201).send({ msg: "data successfully", data: data })
         })
     }
-    else {
-        Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email}, { $inc: {"cartItems.$.quantity": -1} }, { new: true }, function (err, data) {
-            if (err) return new Error("no products")
-            res.status(201).send({ msg: "data successfully", data: data })
-        })
+    
 
     }
 })
