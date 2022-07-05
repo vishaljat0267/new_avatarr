@@ -26,8 +26,7 @@ const DB = 'mongodb+srv://vish:1234@cluster0.c9vwu.mongodb.net/mernstack'
     }).catch((err) => console.log('no connections'));
 
 };
-// app.use(cors());
-// app.use(express.json());
+
 
 
 app.post('/signup', (req, res) => { // new Entry                                                     
@@ -128,25 +127,15 @@ app.get('/mobileproducts', async (req, res) => {
     res.send({ "data": data })
 })
 
-// exports.addtoCart = async (req, res) => {
-//     try {
-//         const { id, email } = req.body;
-//         console.log(req.body);
-//         const result = await UserCollection.updateOne({ email }, { $push: { cartIems: { id } } })
-//         res.status(200).send({ msg: "item added succesfully" })
-//     }
-//     catch (err) {
-//         res.status(500).send(err) 
-//     }
-// }
+
 
 
 app.post('/addtocart', async (req, res) => {
     try {
-        req.body.quantity=1
-        const { title, description, image, email, category, product_id,quantity} = req.body;
+        req.body.quantity = 1
+        const { title, description, image, email, category, product_id, quantity,price } = req.body;
         console.log(req.body);
-        const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id,quantity } } })
+        const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id, quantity,price } } })
         console.log("===============>", result);
         result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({ msg: "email not found" })
     }
@@ -154,35 +143,23 @@ app.post('/addtocart', async (req, res) => {
         res.status(500).send(err)
     }
 
-    //     console.log(req.body);
-    //     // req.body.quantity=1
-    //     const userDetail = await Usermodel.user4(req.body)
-    //     //  userDetail.cartItems.push(_id)
-    //     userDetail.save((err,userDetail)=>{  
-    //     console.log(userDetail);
-    //    if (err) { 
-    //         res.status(500).send({ err })
-    //     }
-    //     else {
-    //         res.status(200).send({msg:"item added succesfully",data:req.body })
-    //     }
-    // })
+
 })
 
-app.delete('/deleteitem/:product_id/:email', async(req, res) => {
+app.delete('/deleteitem/:product_id/:email', async (req, res) => {
     // const userDetail = Usermodel.user4.find(req.body)
     const { product_id, email } = req.params
-    console.log(">>>>>>",req.body);
-    console.log(";;;;;;",req.params);
+    console.log(">>>>>>", req.body);
+    console.log(";;;;;;", req.params);
     const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, {
-        $pull:{
+        $pull: {
             cartItems: {
                 product_id: product_id,
             },
         }
     })
     console.log("===============>", result);
-        result ? res.status(200).send({ msg: "item delete succesfully" ,data:result}) : res.status(404).send({ msg: "email not found" })
+    result ? res.status(200).send({ msg: "item delete succesfully", data: result }) : res.status(404).send({ msg: "email not found" })
 })
 app.post('/cardShow', async (req, res) => {
     try {
@@ -194,52 +171,37 @@ app.post('/cardShow', async (req, res) => {
         res.status(500).send({ error })
     }
 })
-// BlogPost.update({_id: blogPostId, 'comments._id': commentId}, {$inc:{'comments.$.rating':1}})
+
 
 
 app.patch('/updatequantity/:product_id/:email', async (req, res) => {
-   
+
     console.log(req.params)
-    const {product_id,email} = req.params
-    const {update,quantity} = req.body
-    let  i= parseInt(quantity)
-    console.log("=====================>",i);
+    const { product_id, email } = req.params
+    const { update, quantity } = req.body
+    let i = parseInt(quantity)
+    console.log("=====================>", i);
     if (update === "inc") {
 
-       await Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":++i }},{new: true}, function (err, data) {
-            console.log("===>",data);
+        await Usermodel.Usercollec.findOneAndUpdate({ $and: [{ email }, { "cartItems.product_id": product_id }] }, { $set: { "cartItems.$.quantity": ++i } }, { new: true }, function (err, data) {
+            console.log("===>", data);
             if (err) return new Error("no products")
-            res.status(200).send({ data: data})
-        }).clone().catch(function(err){ console.log(err)})
-        // Usermodel.Usercollec.findOneAndUpdate({ "product_id": product_id,"email":email}, { $inc: {quantity: 1 } }, { new: true }, function (err, data) {
-        //     console.log(data);
-        //     if (err) return new Error("no products")
-        //     res.status(201).send({ msg: "data successfully", data: data })
-        // })
+            res.status(200).send({ data: data })
+        }).clone().catch(function (err) { console.log(err) })
+
+
     }
     else {
-        if(i > 0)
-       {
-         Usermodel.Usercollec.findOneAndUpdate({$and:[{email},{"cartItems.product_id":product_id}]}, { $set:{"cartItems.$.quantity":--i }}, { new: true }, function (err, data) {
-            if (err) return new Error("no products")
-            res.status(201).send({ msg: "data successfully", data: data })
-        })
-    }
-    
+        if (i > 0) {
+            Usermodel.Usercollec.findOneAndUpdate({ $and: [{ email }, { "cartItems.product_id": product_id }] }, { $set: { "cartItems.$.quantity": --i } }, { new: true }, function (err, data) {
+                if (err) return new Error("no products")
+                res.status(201).send({ msg: "data successfully", data: data })
+            })
+        }
+
 
     }
 })
-
-
-
-
-
-
-
-
-
-
-
 
 
 app.listen(port, () => {
