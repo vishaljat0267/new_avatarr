@@ -21,7 +21,7 @@ const clothelists = new Schema({
     price: Number,
     description: String,
     category: String,
-    quantity: Number
+  
 });
 
 module.exports.user = new model("clothelists", clothelists)
