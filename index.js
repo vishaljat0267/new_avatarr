@@ -136,7 +136,7 @@ app.post('/addtocart', async (req, res) => {
         const { title, description, image, email, category, product_id, quantity,price } = req.body;
         console.log(req.body);
         const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, { $push: { cartItems: { title, description, image, category, product_id, quantity,price } } })
-        console.log("===============>", result);
+        // console.log("===============>", result);
         result ? res.status(200).send({ msg: "item added succesfully" }) : res.status(404).send({ msg: "email not found" })
     }
     catch (err) {
@@ -149,8 +149,8 @@ app.post('/addtocart', async (req, res) => {
 app.delete('/deleteitem/:product_id/:email', async (req, res) => {
     // const userDetail = Usermodel.user4.find(req.body)
     const { product_id, email } = req.params
-    console.log(">>>>>>", req.body);
-    console.log(";;;;;;", req.params);
+    // console.log(">>>>>>", req.body);
+    // console.log(";;;;;;", req.params);
     const result = await Usermodel.Usercollec.findOneAndUpdate({ email }, {
         $pull: {
             cartItems: {
@@ -161,19 +161,21 @@ app.delete('/deleteitem/:product_id/:email', async (req, res) => {
     console.log("===============>", result);
     result ? res.status(200).send({ msg: "item delete succesfully", data: result }) : res.status(404).send({ msg: "email not found" })
 })
-app.post('/cardShow', async (req, res) => {
+
+app.get('/cardShow', async (req, res) => {
     try {
-        const { email } = req.body
-        const data = await Usermodel.Usercollec.findOne({ email });
-        console.log(">>>>>>>>>>>", data);
-        data ? res.status(200).send({ data: data.cartItems }) : res.status(404).send({ msg: "email not found" });
-    } catch (error) {
-        res.status(500).send({ error })
-    }
+        const {authorization}= req.headers
+        // console.log(">>>>>>",req.headers)
+        var decoded = jwt.verify(authorization , 'email');
+        // console.log(">>>>>>fhsjcdbnm",decoded)
+        const {email} = decoded.useremail
+                const data = await Usermodel.Usercollec.findOne({ email });
+                console.log(">>>>>>>>>>>", data);
+                data ? res.status(200).send({ data: data.cartItems }) : res.status(404).send({ msg: "email not found" });
+            } catch (error) {
+                res.status(500).send({ error })
+            }
 })
-
-
-
 app.patch('/updatequantity/:product_id/:email', async (req, res) => {
 
     console.log(req.params)
